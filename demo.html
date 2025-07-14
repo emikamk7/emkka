@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Finanças - Demo</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container" style="padding: 2rem 0;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h1 style="font-size: 2.5rem; font-weight: 700; color: #1e40af; margin-bottom: 1rem;">Mark Finanças</h1>
+            <p style="color: #64748b; font-size: 1.1rem;">Dashboard financeiro leve e moderno</p>
+        </div>
+
+        <div class="demo-card">
+            <h2 class="text-xl font-semibold mb-4">🚀 Como Usar</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-semibold text-gray-800">1. Instalação Simples</h3>
+                    <p class="text-gray-600">Baixe os arquivos e coloque em seu servidor web</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800">2. Acesse pelo Navegador</h3>
+                    <p class="text-gray-600">Abra o arquivo index.html em qualquer navegador</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800">3. Começar a Usar</h3>
+                    <p class="text-gray-600">Adicione transações e visualize seus gráficos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-card">
+            <h2 class="text-xl font-semibold mb-4">📁 Estrutura dos Arquivos</h2>
+            <div class="demo-code">
+web-version/
+├── index.html              # Página principal
+├── css/
+│   └── style.css           # Estilos customizados
+├── js/
+│   └── app.js              # Lógica da aplicação
+├── api/
+│   └── transactions.php    # API PHP opcional
+├── data/                   # Dados das transações
+├── config.php              # Configurações
+└── README.md              # Documentação
+            </div>
+        </div>
+
+        <div class="demo-card">
+            <h2 class="text-xl font-semibold mb-4">🎯 Funcionalidades</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-blue-50 p-4 rounded">
+                    <h3 class="font-semibold text-blue-800 mb-2">Dashboard</h3>
+                    <ul class="text-sm text-blue-700 space-y-1">
+                        <li>• Resumo financeiro</li>
+                        <li>• Gráficos interativos</li>
+                        <li>• Transações recentes</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 p-4 rounded">
+                    <h3 class="font-semibold text-green-800 mb-2">Transações</h3>
+                    <ul class="text-sm text-green-700 space-y-1">
+                        <li>• Adicionar/editar/excluir</li>
+                        <li>• Categorias customizáveis</li>
+                        <li>• Filtros e pesquisa</li>
+                    </ul>
+                </div>
+                <div class="bg-purple-50 p-4 rounded">
+                    <h3 class="font-semibold text-purple-800 mb-2">Relatórios</h3>
+                    <ul class="text-sm text-purple-700 space-y-1">
+                        <li>• Gráficos mensais</li>
+                        <li>• Análise por categoria</li>
+                        <li>• Exportação de dados</li>
+                    </ul>
+                </div>
+                <div class="bg-orange-50 p-4 rounded">
+                    <h3 class="font-semibold text-orange-800 mb-2">Mobile</h3>
+                    <ul class="text-sm text-orange-700 space-y-1">
+                        <li>• Interface responsiva</li>
+                        <li>• Botão flutuante</li>
+                        <li>• Otimizado para toque</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-card">
+            <h2 class="text-xl font-semibold mb-4">💾 Opções de Armazenamento</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border-2 border-blue-200 p-4 rounded">
+                    <h3 class="font-semibold text-blue-800 mb-2">localStorage (Padrão)</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✅ Não requer servidor PHP</li>
+                        <li>✅ Funciona offline</li>
+                        <li>✅ Instalação simples</li>
+                        <li>⚠️ Dados locais apenas</li>
+                    </ul>
+                </div>
+                <div class="border-2 border-green-200 p-4 rounded">
+                    <h3 class="font-semibold text-green-800 mb-2">Arquivo JSON + PHP</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✅ Dados no servidor</li>
+                        <li>✅ Backup automático</li>
+                        <li>✅ Sincronização</li>
+                        <li>⚠️ Requer PHP</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-card">
+            <h2 class="text-xl font-semibold mb-4">⚙️ Configuração Rápida</h2>
+            <div class="demo-code">
+// config.php - Configurações básicas
+define('APP_NAME', 'Mark Finanças');
+define('APP_TIMEZONE', 'America/Sao_Paulo');
+define('CURRENCY_CODE', 'BRL');
+define('CURRENCY_SYMBOL', 'R$');
+
+// Categorias personalizadas
+define('DEFAULT_CATEGORIES', [
+    'salario' => ['label' => 'Salário', 'color' => '#4CAF50'],
+    'alimentacao' => ['label' => 'Alimentação', 'color' => '#FF6384'],
+    // ... mais categorias
+]);
+            </div>
+        </div>
+
+        <div class="demo-card">
+            <h2 class="text-xl font-semibold mb-4">🔒 Segurança</h2>
+            <div class="bg-yellow-50 p-4 rounded">
+                <h3 class="font-semibold text-yellow-800 mb-2">Recomendações para Produção:</h3>
+                <ul class="text-sm text-yellow-700 space-y-1">
+                    <li>• Configure CORS para domínios específicos</li>
+                    <li>• Desative o modo debug</li>
+                    <li>• Configure permissões de arquivo adequadas</li>
+                    <li>• Use HTTPS em produção</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-card">
+            <h2 class="text-xl font-semibold mb-4">🛠️ Personalização</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-semibold text-gray-800">Cores e Temas</h3>
+                    <div class="demo-code">
+/* css/style.css */
+:root {
+    --primary-color: #3b82f6;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+}
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-800">Ícones</h3>
+                    <div class="demo-code">
+&lt;i data-lucide="wallet"&gt;&lt;/i&gt;
+&lt;i data-lucide="trending-up"&gt;&lt;/i&gt;
+&lt;i data-lucide="credit-card"&gt;&lt;/i&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="index.html" class="demo-button mr-4">
+                <i data-lucide="play" class="w-4 h-4 inline mr-2"></i>
+                Ver Demo Completa
+            </a>
+            <a href="README.md" class="demo-button">
+                <i data-lucide="book" class="w-4 h-4 inline mr-2"></i>
+                Documentação Completa
+            </a>
+        </div>
+
+        <div class="text-center mt-6 text-gray-500 text-sm">
+            <p>Mark Finanças - Versão Web Standalone</p>
+            <p>Gerencie suas finanças com simplicidade e eficiência!</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

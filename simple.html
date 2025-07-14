@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Finanças</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #334155; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .header { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #1e40af; }
+        .nav { display: flex; gap: 0.5rem; }
+        .nav-btn { background: none; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
+        .nav-btn:hover { background: #f1f5f9; }
+        .nav-btn.active { background: #1e40af; color: white; }
+        .page { display: none; padding: 2rem 0; }
+        .page.active { display: block; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem; }
+        .summary-icon { font-size: 2rem; width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; border-radius: 0.75rem; }
+        .balance .summary-icon { background: #dbeafe; }
+        .income .summary-icon { background: #dcfce7; }
+        .expense .summary-icon { background: #fee2e2; }
+        .summary-info h3 { font-size: 0.875rem; font-weight: 500; color: #64748b; margin-bottom: 0.25rem; }
+        .summary-info p { font-size: 1.5rem; font-weight: 600; }
+        .balance p { color: #1e40af; }
+        .income p { color: #16a34a; }
+        .expense p { color: #dc2626; }
+        .content-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; color: #1e293b; }
+        .form { display: flex; flex-direction: column; gap: 1rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: #374151; }
+        .form-group input, .form-group select { padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1); }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
+        .btn-primary { background: #1e40af; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-danger { background: #dc2626; color: white; padding: 0.25rem 0.5rem; font-size: 0.75rem; }
+        .table-container { overflow-x: auto; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; font-weight: 500; font-size: 0.875rem; color: #475569; }
+        tr:hover { background: #f8fafc; }
+        .amount-income { color: #16a34a; font-weight: 600; }
+        .amount-expense { color: #dc2626; font-weight: 600; }
+        .chart-container { position: relative; height: 300px; margin: 1rem 0; }
+        .empty-state { text-align: center; padding: 3rem 1rem; color: #6b7280; }
+        .toast { position: fixed; top: 2rem; right: 2rem; padding: 1rem 1.5rem; background: #16a34a; color: white; border-radius: 0.5rem; transform: translateX(100%); transition: transform 0.3s; z-index: 1000; }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: #dc2626; }
+        @media (max-width: 768px) { .content-grid { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } .header-content { flex-direction: column; gap: 1rem; } }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">Mark Finanças</h1>
+                <nav class="nav">
+                    <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-page="transactions">Transações</button>
+                    <button class="nav-btn" data-page="reports">Relatórios</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <main id="dashboard" class="page active">
+        <div class="container">
+            <section class="summary">
+                <div class="summary-card balance">
+                    <div class="summary-icon">💰</div>
+                    <div class="summary-info">
+                        <h3>Saldo Total</h3>
+                        <p id="balance">R$ 0,00</p>
+                    </div>
+                </div>
+                <div class="summary-card income">
+                    <div class="summary-icon">📈</div>
+                    <div class="summary-info">
+                        <h3>Receitas</h3>
+                        <p id="income">R$ 0,00</p>
+                    </div>
+                </div>
+                <div class="summary-card expense">
+                    <div class="summary-icon">📉</div>
+                    <div class="summary-info">
+                        <h3>Despesas</h3>
+                        <p id="expense">R$ 0,00</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="content-grid">
+                <div class="card">
+                    <h2>Nova Transação</h2>
+                    <form id="form" class="form">
+                        <div class="form-group">
+                            <label>Descrição</label>
+                            <input type="text" name="description" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Valor</label>
+                                <input type="number" name="amount" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Data</label>
+                                <input type="date" name="date" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Categoria</label>
+                                <select name="category" required>
+                                    <option value="">Selecione</option>
+                                    <option value="salario">Salário</option>
+                                    <option value="alimentacao">Alimentação</option>
+                                    <option value="transporte">Transporte</option>
+                                    <option value="saude">Saúde</option>
+                                    <option value="lazer">Lazer</option>
+                                    <option value="ayla">Ayla</option>
+                                    <option value="outros">Outros</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo</label>
+                                <select name="type" required>
+                                    <option value="">Selecione</option>
+                                    <option value="income">Receita</option>
+                                    <option value="expense">Despesa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Despesas por Categoria</h2>
+                    <div class="chart-container">
+                        <canvas id="chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Transações Recentes</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Valor</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions">
+                            <tr><td colspan="5" class="empty-state">Nenhuma transação encontrada</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Transactions -->
+    <main id="transactions" class="page">
+        <div class="container">
+            <div class="card">
+                <h2>Todas as Transações</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-transactions">
+                            <tr><td colspan="6" class="empty-state">Nenhuma transação encontrada</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Reports -->
+    <main id="reports" class="page">
+        <div class="container">
+            <div class="content-grid">
+                <div class="card">
+                    <h2>Receitas vs Despesas</h2>
+                    <div class="chart-container">
+                        <canvas id="monthly-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Resumo por Categoria</h2>
+                    <div id="category-summary">
+                        <div class="empty-state">Nenhuma despesa encontrada</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script>
+        class App {
+            constructor() {
+                this.key = 'mark-financas';
+                this.data = JSON.parse(localStorage.getItem(this.key)) || [];
+                this.categories = {
+                    salario: { label: 'Salário', color: '#16a34a' },
+                    alimentacao: { label: 'Alimentação', color: '#dc2626' },
+                    transporte: { label: 'Transporte', color: '#2563eb' },
+                    saude: { label: 'Saúde', color: '#ca8a04' },
+                    lazer: { label: 'Lazer', color: '#7c3aed' },
+                    ayla: { label: 'Ayla', color: '#ea580c' },
+                    outros: { label: 'Outros', color: '#64748b' }
+                };
+                this.chart = null;
+                this.monthlyChart = null;
+                this.init();
+            }
+
+            init() {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', e => this.showPage(e.target.dataset.page));
+                });
+                document.getElementById('form').addEventListener('submit', e => this.submit(e));
+                document.querySelector('input[type="date"]').value = new Date().toISOString().split('T')[0];
+                this.update();
+            }
+
+            showPage(page) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(page).classList.add('active');
+                document.querySelector(`[data-page="${page}"]`).classList.add('active');
+                
+                if (page === 'transactions') {
+                    this.updateAll();
+                } else if (page === 'reports') {
+                    this.updateReports();
+                }
+            }
+
+            submit(e) {
+                e.preventDefault();
+                const form = new FormData(e.target);
+                const t = {
+                    id: Date.now(),
+                    description: form.get('description'),
+                    amount: parseFloat(form.get('amount')),
+                    date: form.get('date'),
+                    category: form.get('category'),
+                    type: form.get('type')
+                };
+                this.data.push(t);
+                localStorage.setItem(this.key, JSON.stringify(this.data));
+                this.update();
+                e.target.reset();
+                document.querySelector('input[type="date"]').value = new Date().toISOString().split('T')[0];
+                this.toast('Transação adicionada!');
+            }
+
+            delete(id) {
+                if (confirm('Remover transação?')) {
+                    this.data = this.data.filter(t => t.id !== id);
+                    localStorage.setItem(this.key, JSON.stringify(this.data));
+                    this.update();
+                    this.toast('Transação removida!');
+                }
+            }
+
+            update() {
+                const income = this.data.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+                const expense = this.data.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+                
+                document.getElementById('balance').textContent = this.currency(income - expense);
+                document.getElementById('income').textContent = this.currency(income);
+                document.getElementById('expense').textContent = this.currency(expense);
+                
+                this.updateTable();
+                this.updateChart();
+            }
+
+            updateTable() {
+                const recent = this.data.slice(-5).reverse();
+                const tbody = document.getElementById('transactions');
+                tbody.innerHTML = recent.length ? recent.map(t => `
+                    <tr>
+                        <td>${new Date(t.date).toLocaleDateString('pt-BR')}</td>
+                        <td>${t.description}</td>
+                        <td>${this.categories[t.category].label}</td>
+                        <td class="amount-${t.type}">${this.currency(t.amount)}</td>
+                        <td><button class="btn-danger" onclick="app.delete(${t.id})">×</button></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" class="empty-state">Nenhuma transação encontrada</td></tr>';
+            }
+
+            updateAll() {
+                const tbody = document.getElementById('all-transactions');
+                const sorted = [...this.data].sort((a, b) => new Date(b.date) - new Date(a.date));
+                tbody.innerHTML = sorted.length ? sorted.map(t => `
+                    <tr>
+                        <td>${new Date(t.date).toLocaleDateString('pt-BR')}</td>
+                        <td>${t.description}</td>
+                        <td>${this.categories[t.category].label}</td>
+                        <td>${t.type === 'income' ? 'Receita' : 'Despesa'}</td>
+                        <td class="amount-${t.type}">${this.currency(t.amount)}</td>
+                        <td><button class="btn-danger" onclick="app.delete(${t.id})">×</button></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="6" class="empty-state">Nenhuma transação encontrada</td></tr>';
+            }
+
+            updateChart() {
+                const ctx = document.getElementById('chart').getContext('2d');
+                const expenses = this.data.filter(t => t.type === 'expense');
+                const by = {};
+                expenses.forEach(t => by[t.category] = (by[t.category] || 0) + t.amount);
+                
+                if (this.chart) this.chart.destroy();
+                
+                const entries = Object.entries(by);
+                this.chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: entries.map(([k]) => this.categories[k].label),
+                        datasets: [{
+                            data: entries.map(([, v]) => v),
+                            backgroundColor: entries.map(([k]) => this.categories[k].color)
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            currency(v) {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+            }
+
+            updateReports() {
+                this.updateMonthlyChart();
+                this.updateCategorySummary();
+            }
+
+            updateMonthlyChart() {
+                const ctx = document.getElementById('monthly-chart');
+                if (!ctx) return;
+
+                const monthly = {};
+                this.data.forEach(t => {
+                    const month = t.date.substring(0, 7);
+                    if (!monthly[month]) monthly[month] = { income: 0, expense: 0 };
+                    monthly[month][t.type] += t.amount;
+                });
+
+                if (this.monthlyChart) this.monthlyChart.destroy();
+
+                const months = Object.keys(monthly).sort();
+                if (months.length === 0) return;
+
+                this.monthlyChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: months.map(m => {
+                            const [year, month] = m.split('-');
+                            return `${month}/${year}`;
+                        }),
+                        datasets: [
+                            {
+                                label: 'Receitas',
+                                data: months.map(m => monthly[m].income),
+                                backgroundColor: '#16a34a'
+                            },
+                            {
+                                label: 'Despesas',
+                                data: months.map(m => monthly[m].expense),
+                                backgroundColor: '#dc2626'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            updateCategorySummary() {
+                const container = document.getElementById('category-summary');
+                const expenses = this.data.filter(t => t.type === 'expense');
+                const byCategory = {};
+                
+                expenses.forEach(t => {
+                    byCategory[t.category] = (byCategory[t.category] || 0) + t.amount;
+                });
+
+                const entries = Object.entries(byCategory);
+                if (entries.length === 0) {
+                    container.innerHTML = '<div class="empty-state">Nenhuma despesa encontrada</div>';
+                    return;
+                }
+
+                container.innerHTML = entries.map(([key, value]) => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 1rem; height: 1rem; border-radius: 50%; background: ${this.categories[key].color}"></div>
+                            <span>${this.categories[key].label}</span>
+                        </div>
+                        <span style="font-weight: 600; color: #dc2626;">${this.currency(value)}</span>
+                    </div>
+                `).join('');
+            }
+
+            toast(msg) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
+        }
+
+        const app = new App();
+    </script>
+</body>
+</html>
